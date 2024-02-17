@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Sandbox POC</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="flex-container" style="flex-direction: column; width: 90%; margin: 0 auto; margin-top: 2rem">
+      <h1>WebContainers are Great!</h1>
+      <form id="command-form">
+        <input id="command" name="command" style="font-size: 1rem"></input>
+        <button type="submit" class="button">Run</button>
+      </form>
+    </div>
+    <div
+      class="container"
+      style="height: 60%; width: 90%; margin: 0 auto; margin-top: 2rem"
+    >
+      <div class="editor">
+        <textarea>I am a textarea</textarea>
+      </div>
+      <div class="preview">
+        <iframe id="preview-iframe" src="loading.html"></iframe>
+      </div>
+    </div>
+    <div class="container" style="margin: 0 auto; width: 90%; margin-top: 1rem">
+      <button id="run-code-btn" class="button">Run Code</button>
+    </div>
+    <div class="flex-container">
+      <div style="width: 90%">
+        <h2>Upload File</h2>
+        <div
+          class="flex-container"
+          style="flex-direction: column; align-items: start; gap: 1rem"
+          width="90%"
+        >
+          <input type="file" id="fileInput" name="file" />
+          <button id="upload-file-btn" class="button" onclick="uploadFile()">
+            Upload file
+          </button>
+        </div>
+        <textarea id="file-list" style="margin-top: 1rem" rows="10" cols="33">
+Files: </textarea
+        >
+      </div>
+    </div>
+    <script>
+      function uploadFile() {
+        const input = document.getElementById("fileInput");
+        if (!input.files.length) {
+          alert("Please select a file to upload.");
+          return;
+        }
+        const data = new FormData();
+        data.append("file", input.files[0]);
+
+        fetch("/upload", {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const fileListTextarea = document.getElementById("file-list");
+
+            fileListTextarea.textContent += "\n" + data.filePath;
+            fileListTextarea.dispatchEvent(new Event("input"));
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+    <script type="module" src="main.mjs"></script>
+  </body>
+</html>
