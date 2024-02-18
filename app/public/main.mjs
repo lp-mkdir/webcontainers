@@ -81,7 +81,6 @@ async function writeIndexJS(content) {
 
 const textareaElement = document.querySelector("textarea");
 const runButton = document.getElementById("run-code-btn");
-// const uploadFileBtn = document.getElementById("upload-file-btn");
 const textareaFileList = document.getElementById("file-list");
 
 window.addEventListener("load", async () => {
@@ -138,14 +137,8 @@ window.addEventListener("load", async () => {
   async function runCommand(command, args) {
     const res = await webcontainerInstance.spawn(command, args);
 
-    if (await res.exit === 0) {
-      res.output.pipeTo(
-        new WritableStream({
-          write(data) {
-            console.log(data);
-          },
-        })
-      );
+    if (await res.exit) {
+      console.log("ERROR: " + data);
     }
 
     res.output.pipeTo(
